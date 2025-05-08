@@ -1,31 +1,37 @@
 
 # image_rotate.py
 
+import sys
+from typing import Union
+
+import numpy as np
 from PIL import Image
 
-def rotate_image(image: Image.Image) -> Image.Image:
+def rotate_image(image: Union[Image.Image, np.ndarray]) -> Image.Image:
     """
-    Rotate the given PIL Image 90 degrees clockwise and return the rotated image.
+    Rotate the given image (PIL Image or numpy ndarray) 90 degrees clockwise
+    and return the rotated image as a PIL Image.
     """
-    # PIL's rotate() method uses counter-clockwise degrees, so we pass -90 for a 90° clockwise rotation.
-    # expand=True ensures the output image size is adjusted to hold the full rotated image.
-    return image.rotate(-90, expand=True)
+    # If the input is a numpy array, convert it to a PIL Image
+    if isinstance(image, np.ndarray):
+        image = Image.fromarray(image)
+    # Rotate 90° clockwise by passing -90° to PIL's rotate (which is counter-clockwise)
+    rotated = image.rotate(-90, expand=True)
+    return rotated
 
 if __name__ == '__main__':
-    import sys
-
     if len(sys.argv) != 3:
         print("Usage: python image_rotate.py <input_image_path> <output_image_path>")
         sys.exit(1)
 
     input_path, output_path = sys.argv[1], sys.argv[2]
 
-    # Open the input image
+    # Open the input image using PIL
     img = Image.open(input_path)
 
-    # Rotate it
+    # Rotate the image
     rotated_img = rotate_image(img)
 
-    # Save the result
+    # Save the rotated image
     rotated_img.save(output_path)
     print(f"Rotated image saved to {output_path}")
